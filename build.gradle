@@ -30,7 +30,7 @@ repositories {
 task buildDocker(type: Docker, dependsOn: build) {
     applicationName = jar.baseName
 	def registry =  project.hasProperty('registry') ? project.getProperty('registry') : "gilles-stragier"
-    tag = "${registry}/${applicationName}"
+    tag = "${registry}/quickmon"
 	push = true
 
 	dockerfile = file('src/main/docker/Dockerfile')
