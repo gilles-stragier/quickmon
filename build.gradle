@@ -11,6 +11,8 @@ buildscript {
 	}
 }
 
+
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -27,8 +29,9 @@ repositories {
 
 task buildDocker(type: Docker, dependsOn: build) {
     applicationName = jar.baseName
-    tag = "gilles-stragier/${applicationName}"
-	push = false
+	def registry =  project.hasProperty('registry') ? project.getProperty('registry') : "gilles-stragier"
+    tag = "${registry}/${applicationName}"
+	push = true
 
 	dockerfile = file('src/main/docker/Dockerfile')
 	doFirst {
@@ -39,18 +42,6 @@ task buildDocker(type: Docker, dependsOn: build) {
 	}
 }
 
-task pushDocker(type:Exec) {
-
-    commandLine 'gcloud', 'docker', '--', 'push', 'eu.gcr.io/cloud-166908/quickmon'
-
-    //store the output instead of printing to the console:
-    standardOutput = new ByteArrayOutputStream()
-
-    //extension method stopTomcat.output() can be used to obtain the output:
-    ext.output = {
-        return standardOutput.toString()
-    }
-}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-actuator')
