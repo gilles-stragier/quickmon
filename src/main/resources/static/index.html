@@ -1,0 +1,60 @@
+<!doctype html>
+<html ng-app="quickMon" xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
+
+<head>
+    <base href="/"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="css/app.css"/>
+	<link rel="stylesheet" href="webjars/bootstrap/4.0.0-alpha.6-1/css/bootstrap.css"/>
+    <link rel="stylesheet" href="webjars/font-awesome/4.4.0/css/font-awesome.css"/>
+
+</head>
+
+<body>
+    <!--<div ng-include="'js/navbar/navbar-template.html'"></div>-->
+
+    <ui-view>
+
+    </ui-view>
+
+
+    <!-- VENDOR MAGIC -->
+  	<script src="webjars/jquery/3.1.1/jquery.min.js"></script>
+    <script src="webjars/angular/1.4.5/angular.min.js"></script>
+    <script src="webjars/angular-ui-router/0.2.15/release/angular-ui-router.min.js"></script>
+    <script src="webjars/tether/1.4.0/dist/js/tether.min.js"></script>
+
+    <script src="webjars/bootstrap/4.0.0-alpha.6-1/js/bootstrap.min.js"></script>
+	<script src="webjars/lodash/3.10.1/lodash.min.js"></script>
+	<script src="webjars/traverson-angular/2.1.4/browser/dist/traverson-angular.min.js"></script>
+	<script src="webjars/traverson-hal/2.1.0/browser/dist/traverson-hal.min.js"></script>
+    <script src="webjars/requirejs/2.3.2/require.js"></script>
+    <script type="text/javascript">
+        require.config({
+            baseUrl: '/js/vendor/'
+        });
+    </script>
+
+
+
+    <!-- CAMMI MAGIC -->
+    <script src="../js/app.js?project.version"></script>
+
+    <script src="../js/navbar/navbar-controller.js?project.version"></script>
+
+    <script src="../js/healthChecks/healthChecks-list-controller.js?project.version"></script>
+    <script src="../js/healthChecks/healthChecks-detail-controller.js?project.version"></script>
+    <script src="../js/healthChecks/healthChecks-service.js?project.version"></script>
+
+    <script src="../js/common/traverson-service.js?project.version"></script>
+
+
+
+
+</body>
+
+</html>

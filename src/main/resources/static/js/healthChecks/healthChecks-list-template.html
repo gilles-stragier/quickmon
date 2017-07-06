@@ -1,0 +1,67 @@
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+    <a class="navbar-brand" href="/ui">
+        <i class="fa fa-tachometer" aria-hidden="true"></i>
+        Quickmon
+    </a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Display
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a ng-click="vm.changeDisplay(i)" class="dropdown-item" ng-repeat="i in ['compact','minimalistic', 'full']">
+                        {{ i }}
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0 float-right" >
+            <input class="form-control mr-sm-2" size="50" type="text" placeholder="Search" ng-model="vm.queryForm">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" ng-click="vm.search()">Search</button>
+        </form>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="card-deck-wrapper">
+                <div class="card-columns"  style="column-count: 1">
+                    <div class="card" ng-if="!vm.selectedStatus">
+                        <div class="card-header">
+                            Statuses
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a ng-click="vm.addStatus(key)" class="list-group-item list-group-item-action justify-content-between" ng-repeat="(key, value) in vm.statuses">
+                                {{ key }} <span class="badge badge-default badge-pill">{{ value }}</span>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            Tags
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a ng-click="vm.addTag(key)" class="list-group-item list-group-item-action justify-content-between"ng-repeat="(key, value) in vm.tags">
+                                {{ key }} <span class="badge badge-default badge-pill">{{ value }}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10 col-lg-10">
+            <div>
+                <div class="card-deck-wrapper">
+                    <div class="card-columns" ng-style="{'column-count': vm.getColumnCount(), 'margin-bottom': '0.15rem', 'column-gap': '0.1rem'}">
+                        <div ng-repeat="healthCheck in vm.healthChecks" ng-class="vm.computeClass(healthCheck)" style="margin:0.1rem">
+                                <ng-include src="'js/healthChecks/healthcheck-item-' + vm.display() + '.html'"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

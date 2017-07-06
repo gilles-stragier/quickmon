@@ -1,0 +1,123 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath('se.transmode.gradle:gradle-docker:1.2')
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'docker'
+
+group = 'gilles-stragier.quickmon'
+version = '0.0.1'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+task buildDocker(type: Docker, dependsOn: build) {
+    applicationName = jar.baseName
+    tag = "gilles-stragier/${applicationName}"
+	push = false
+
+	dockerfile = file('src/main/docker/Dockerfile')
+	doFirst {
+		copy {
+			from jar
+			into stageDir
+		}
+	}
+}
+
+task pushDocker(type:Exec) {
+
+    commandLine 'gcloud', 'docker', '--', 'push', 'eu.gcr.io/cloud-166908/quickmon'
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-hateoas')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework:spring-jdbc')
+	compile('org.springframework:spring-context-support')
+	compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	compile 'org.apache.commons:commons-lang3:3.5'
+	compile 'com.jcraft:jsch:0.1.54'
+	compile 'org.apache.httpcomponents:httpclient'
+	compile 'com.jayway.jsonpath:json-path:2.2.0'
+
+	compile("javax.mail:mail:1.4.4")
+	compile 'org.webjars:bootstrap:4.0.0-alpha.6-1'
+
+	runtime ('org.webjars.bower:angular:1.4.5')  {
+		transitive=false
+	}
+
+	runtime ('org.webjars.bower:angular-bootstrap:0.14.2')  {
+		transitive= false
+	}
+
+	runtime ('org.webjars.bower:angular-ui-router:0.2.15')  {
+		transitive= false
+	}
+
+	runtime ('org.webjars.bower:font-awesome:4.4.0')  {
+		transitive= false
+	}
+
+	runtime ('org.webjars.bower:tether:1.4.0') {
+		transitive=false
+	}
+
+	runtime ('org.webjars:jquery:3.1.1')  {
+		transitive= false
+	}
+
+
+	runtime ('org.webjars.bower:lodash:3.10.1')  {
+		transitive= false
+	}
+
+	runtime ('org.webjars.bower:traverson-angular:2.1.4')  {
+		transitive= false
+	}
+
+	runtime ('org.webjars.bower:traverson-hal:2.1.0')  {
+		transitive= false
+	}
+
+
+	runtime ('org.webjars:requirejs:2.3.2') {
+        transitive= false
+    }
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Dalston.RELEASE"
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}

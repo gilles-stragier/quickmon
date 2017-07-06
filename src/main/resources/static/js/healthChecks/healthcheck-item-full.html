@@ -1,0 +1,34 @@
+<div class="card-header" style="padding-top: 0.1rem; padding-bottom: 0.1rem; padding-left: 0.1rem; padding-right: 0.1rem; margin-bottom: 0.1rem;">
+    <div class="card-title text-center">
+        <a class="card-link" ui-sref="healthChecksDetail({ healthCheckName: healthCheck.name})">
+            {{healthCheck.name}}
+        </a>
+    </div>
+</div>
+<div class="card-block" style="padding-top: 0.1rem; padding-bottom: 0.1rem; padding-left: 0.3rem; padding-right: 0.3rem; margin-bottom: 0.1rem;">
+        <div class="row">
+            <div class="col-md-2 text-center">
+                <a class="card-link" ui-sref="healthChecksDetail({ healthCheckName: healthCheck.name})">
+                    <i ng-class="'fa-5x fa ' + healthCheck.fa"/>
+                </a>
+            </div>
+            <div class="col-md-8">
+                {{ healthCheck.message }}
+            </div>
+            <div class="col-md-2 text-right" style="padding-left: 0rem">
+                <ul class="list-group list-group-flush">
+                    <li ng-repeat="(key, value) in healthCheck.stats" ng-if="value > 0" style="list-style-type: none">
+                        <span ng-if="key == 'CRITICAL'">{{ value }}%<i class="fa fa-times-circle"/></span>
+                        <span ng-if="key == 'WARNING'">{{ value }}%<i class="fa fa-warning"/></span>
+                        <span ng-if="key == 'OK'">{{ value }}%<i class="fa fa-thumbs-up"/></span>
+                        <span ng-if="key == 'UNCHECKED'">{{ value }}%<i class="fa fa-question-circle"/></span>
+                        <span ng-if="key == 'UNKNOWN'">{{ value }}%<i class="fa fa-question-circle-o"/></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+</div>
+
+<div class="card-footer text-center" style="padding-top: 0.1rem; padding-bottom: 0.1rem; padding-left: 0.1rem; padding-right: 0.1rem; margin-bottom: 0.1rem;">
+    Since {{ healthCheck.checkedOn | date : 'hh:mm:ss yyyy-MM-dd'}}
+</div>

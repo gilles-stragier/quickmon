@@ -1,2 +1,3 @@
 # quickmon
-A flexible monitoring dashboard
+
+A Flexible monitoring dashboard

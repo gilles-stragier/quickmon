@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: quickmon
+  name: quickmon
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quickmon
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: quickmon
+      name: quickmon
+    spec:
+      containers:
+      - image: gcr.io/caamibot/quickmon:0.0.1
+        imagePullPolicy: Always
+        name: quickmon
+        env:
+            - name: "healthchecks_file"
+              value: "/tmp/healthchecks.json"
+        resources: {}
+        securityContext:
+          privileged: false
+        terminationMessagePath: /dev/termination-log
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
