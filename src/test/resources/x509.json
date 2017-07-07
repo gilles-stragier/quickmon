@@ -1,0 +1,22 @@
+[
+  {
+    "name": "GitHub",
+    "tags": [
+      "test"
+    ],
+    "assertions": [
+      {
+        "type": "spel",
+        "expression": "#daysAfter(#root.notAfter) > 1000"
+      }
+    ],
+    "aggregator": {
+      "type": "mostRecent",
+      "window": "PT30M"
+    },
+    "sampler": {
+      "type": "x509",
+      "url": "https://github.com"
+    }
+  }
+]

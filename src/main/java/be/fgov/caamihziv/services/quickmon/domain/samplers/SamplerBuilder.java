@@ -4,6 +4,7 @@ import be.fgov.caamihziv.services.quickmon.domain.Builder;
 import be.fgov.caamihziv.services.quickmon.domain.ValidationUtils;
 import be.fgov.caamihziv.services.quickmon.domain.samplers.http.HttpSamplerBuilder;
 import be.fgov.caamihziv.services.quickmon.domain.samplers.ssh.JschSamplerBuilder;
+import be.fgov.caamihziv.services.quickmon.domain.samplers.x509.X509SamplerBuilder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -21,7 +22,9 @@ import java.util.List;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = HttpSamplerBuilder.class, name = "http"),
-        @JsonSubTypes.Type(value = JschSamplerBuilder.class, name = "ssh")
+        @JsonSubTypes.Type(value = JschSamplerBuilder.class, name = "ssh"),
+        @JsonSubTypes.Type(value = X509SamplerBuilder.class, name = "x509"),
+
 })
 public abstract class SamplerBuilder<T extends SamplerBuilder, U extends Sampler> implements Builder<T,U> {
 
