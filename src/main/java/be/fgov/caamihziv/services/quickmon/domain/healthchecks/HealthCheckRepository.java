@@ -18,4 +18,8 @@ public interface HealthCheckRepository {
     void save(Set<HealthCheck> healthChecks);
 
     void deleteAll();
+
+    boolean exists(String name);
+
+    void delete(String name);
 }

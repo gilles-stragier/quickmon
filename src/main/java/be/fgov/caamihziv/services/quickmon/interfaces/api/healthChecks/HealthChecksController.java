@@ -56,6 +56,16 @@ public class HealthChecksController {
         return convertToFullResource(healthCheckRepository.findByName(name));
     }
 
+    @RequestMapping(value = "/{name}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteOne(@PathVariable("name") String name) {
+        if (!healthCheckRepository.exists(name)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            healthCheckRepository.delete(name);
+            return ResponseEntity.noContent().build();
+        }
+    }
+
     private FullHealthCheck convertToFullResource(HealthCheck healthCheck) {
         FullHealthCheck healthCheckResource = new FullHealthCheck(healthCheck);
         healthCheckResource.add(linkTo(methodOn(HealthChecksController.class).getOne(healthCheck.getName())).withSelfRel());

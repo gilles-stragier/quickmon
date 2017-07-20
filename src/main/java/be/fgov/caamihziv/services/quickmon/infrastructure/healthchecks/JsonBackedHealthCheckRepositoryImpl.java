@@ -1,4 +1,4 @@
-package be.fgov.caamihziv.services.quickmon.infrastructure.check;
+package be.fgov.caamihziv.services.quickmon.infrastructure.healthchecks;
 
 import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthCheck;
 import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthCheckBuilder;
@@ -85,5 +85,19 @@ public class JsonBackedHealthCheckRepositoryImpl implements HealthCheckRepositor
     public void deleteAll() {
         healthCheckList.clear();
         writeToFile();
+    }
+
+    @Override
+    public boolean exists(String name) {
+        return findByName(name) != null;
+    }
+
+    @Override
+    public void delete(String name) {
+        HealthCheck healthCheck = findByName(name);
+        if (healthCheck != null) {
+            healthCheckList.remove(healthCheck);
+            writeToFile();
+        }
     }
 }
