@@ -12,7 +12,7 @@ public class X509SamplerBuilder extends SamplerBuilder<X509SamplerBuilder, X509S
 
     @Override
     public String getType() {
-        return "http";
+        return "x509";
     }
 
     @Override
