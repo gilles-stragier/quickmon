@@ -81,6 +81,12 @@ public class JsonBackedHealthCheckRepositoryImpl implements HealthCheckRepositor
         writeToFile();
     }
 
+    public synchronized void save(HealthCheck healthCheck) {
+        healthCheckList.remove(healthCheck);
+        healthCheckList.add(healthCheck);
+        writeToFile();
+    }
+
     @Override
     public void deleteAll() {
         healthCheckList.clear();

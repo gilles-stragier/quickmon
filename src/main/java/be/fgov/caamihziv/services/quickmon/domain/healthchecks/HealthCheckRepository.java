@@ -22,4 +22,6 @@ public interface HealthCheckRepository {
     boolean exists(String name);
 
     void delete(String name);
+
+    void save(HealthCheck healthCheck);
 }
