@@ -10,7 +10,7 @@ public class MailNotifierBuilder extends NotifierBuilder<MailNotifierBuilder, Ma
     private String url;
     private String from;
     private String to;
-
+    private String subjectPrefix;
 
     public MailNotifierBuilder from(String val) {
         this.from = val;
@@ -24,6 +24,11 @@ public class MailNotifierBuilder extends NotifierBuilder<MailNotifierBuilder, Ma
 
     public MailNotifierBuilder url(String val) {
         this.url = val;
+        return this;
+    }
+
+    public MailNotifierBuilder subjectPrefix(String val) {
+        this.subjectPrefix = val;
         return this;
     }
 
@@ -47,5 +52,9 @@ public class MailNotifierBuilder extends NotifierBuilder<MailNotifierBuilder, Ma
 
     public String getTo() {
         return to;
+    }
+
+    public String getSubjectPrefix() {
+        return subjectPrefix;
     }
 }

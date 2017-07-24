@@ -30,10 +30,13 @@ public class MailNotifier extends AbstractNotifier {
     private Optional<String> userName;
     private Optional<String> pwd;
     private String url;
+    private String subjectPrefix;
 
 
     public MailNotifier(MailNotifierBuilder builder) {
         super(builder);
+
+        this.subjectPrefix = builder.getSubjectPrefix();
         this.url = builder.getUrl();
 
         URI uri = URI.create(builder.getUrl());
@@ -61,6 +64,7 @@ public class MailNotifier extends AbstractNotifier {
                 .tags(getTags())
                 .statuses(getStatuses())
                 .period(getPeriod())
+                .subjectPrefix(subjectPrefix)
                 .url(url)
                 .from(from)
                 .to(to)
@@ -72,7 +76,7 @@ public class MailNotifier extends AbstractNotifier {
         if (!healthChecks.isEmpty()) {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(from);
-            message.setSubject("Quickmon Alerts : " + healthChecks.size() + " failing checks");
+            message.setSubject(subjectPrefix + " : " + healthChecks.size() + " failing checks");
             message.setTo(to);
 
             message.setText(buildMailContent(healthChecks));
@@ -113,6 +117,10 @@ public class MailNotifier extends AbstractNotifier {
 
     public Optional<String> getPwd() {
         return pwd;
+    }
+
+    public String getSubjectPrefix() {
+        return subjectPrefix;
     }
 }
 
