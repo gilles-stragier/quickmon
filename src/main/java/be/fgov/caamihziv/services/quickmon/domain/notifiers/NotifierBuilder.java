@@ -34,6 +34,7 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
     private Duration period;
     private Collection<String> tags;
     private Collection<HealthStatus.Health> statuses;
+    private boolean onlyOnChange = true;
 
     public NotifierBuilder() {
         this.tags = new ArrayList<>();
@@ -58,6 +59,11 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
 
     public T name(String val) {
         this.name = val;
+        return (T) this;
+    }
+
+    public T onlyOnChange(boolean val) {
+        this.onlyOnChange = val;
         return (T) this;
     }
 
@@ -89,4 +95,8 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
     public abstract String getType();
 
     public abstract U build();
+
+    public boolean isOnlyOnChange() {
+        return onlyOnChange;
+    }
 }

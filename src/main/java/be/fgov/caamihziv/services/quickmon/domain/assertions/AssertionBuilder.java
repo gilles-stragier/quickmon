@@ -25,6 +25,7 @@ import java.util.List;
 public abstract class AssertionBuilder<T extends AssertionBuilder, U extends Assertion> implements Builder<T,U> {
 
     protected boolean critical;
+    protected String message;
 
     public AssertionBuilder() {
         critical = true;
@@ -32,6 +33,11 @@ public abstract class AssertionBuilder<T extends AssertionBuilder, U extends Ass
 
     public T critical(boolean critical) {
         this.critical = critical;
+        return (T) this;
+    }
+
+    public T message(String message) {
+        this.message = message;
         return (T) this;
     }
 
@@ -43,6 +49,10 @@ public abstract class AssertionBuilder<T extends AssertionBuilder, U extends Ass
 
     public boolean isCritical() {
         return critical;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     public abstract  String getType();
