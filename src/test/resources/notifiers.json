@@ -1,7 +1,7 @@
 [
-{
-	"type": "logging",	
-	"name": "logitall",
-	"period": "PT1M"
-}
+  {
+    "type": "logging",
+    "name": "logitall",
+    "period": "PT1M"
+  }
 ]

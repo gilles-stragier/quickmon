@@ -4,6 +4,7 @@ import be.fgov.caamihziv.services.quickmon.domain.Builder;
 import be.fgov.caamihziv.services.quickmon.domain.ValidationUtils;
 import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthStatus;
 import be.fgov.caamihziv.services.quickmon.domain.notifiers.logging.LoggingNotifierBuilder;
+import be.fgov.caamihziv.services.quickmon.domain.notifiers.mail.MailNotifierBuilder;
 import be.fgov.caamihziv.services.quickmon.domain.samplers.http.HttpSamplerBuilder;
 import be.fgov.caamihziv.services.quickmon.domain.samplers.ssh.JschSamplerBuilder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -26,7 +27,8 @@ import java.util.List;
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = LoggingNotifierBuilder.class, name = "logging")
+        @JsonSubTypes.Type(value = LoggingNotifierBuilder.class, name = "logging"),
+        @JsonSubTypes.Type(value = MailNotifierBuilder.class, name = "mail"),
 })
 public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notifier> implements Builder<T,U> {
 

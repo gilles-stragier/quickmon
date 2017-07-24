@@ -7,20 +7,10 @@ import be.fgov.caamihziv.services.quickmon.domain.notifiers.NotifierBuilder;
  */
 public class MailNotifierBuilder extends NotifierBuilder<MailNotifierBuilder, MailNotifier> {
 
-    private String smtpHost;
-    private Integer smtpPort;
+    private String url;
     private String from;
     private String to;
 
-    public MailNotifierBuilder smtpHost(String val) {
-        this.smtpHost = val;
-        return this;
-    }
-
-    public MailNotifierBuilder smtpPort(int val) {
-        this.smtpPort = val;
-        return this;
-    }
 
     public MailNotifierBuilder from(String val) {
         this.from = val;
@@ -29,6 +19,11 @@ public class MailNotifierBuilder extends NotifierBuilder<MailNotifierBuilder, Ma
 
     public MailNotifierBuilder to(String val) {
         this.to = val;
+        return this;
+    }
+
+    public MailNotifierBuilder url(String val) {
+        this.url = val;
         return this;
     }
 
@@ -42,12 +37,8 @@ public class MailNotifierBuilder extends NotifierBuilder<MailNotifierBuilder, Ma
         return new MailNotifier(this);
     }
 
-    public Integer getSmtpPort() {
-        return smtpPort;
-    }
-
-    public String getSmtpHost() {
-        return smtpHost;
+    public String getUrl() {
+        return url;
     }
 
     public String getFrom() {

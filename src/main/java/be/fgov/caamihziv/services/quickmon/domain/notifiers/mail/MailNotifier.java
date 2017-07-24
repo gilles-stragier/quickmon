@@ -3,11 +3,17 @@ package be.fgov.caamihziv.services.quickmon.domain.notifiers.mail;
 import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthCheck;
 import be.fgov.caamihziv.services.quickmon.domain.notifiers.AbstractNotifier;
 import be.fgov.caamihziv.services.quickmon.domain.notifiers.NotifierBuilder;
+import be.fgov.caamihziv.services.quickmon.domain.notifiers.logging.LoggingNotifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.util.Assert;
 
+import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -15,16 +21,35 @@ import java.util.stream.Collectors;
  */
 public class MailNotifier extends AbstractNotifier {
 
+    private Logger logger = LoggerFactory.getLogger(MailNotifier.class);
+
     private String smtpHost;
     private int smtpPort;
     private String from;
     private String to;
+    private Optional<String> userName;
+    private Optional<String> pwd;
+    private String url;
 
 
     public MailNotifier(MailNotifierBuilder builder) {
         super(builder);
-        this.smtpHost = builder.getSmtpHost();
-        this.smtpPort = builder.getSmtpPort();
+        this.url = builder.getUrl();
+
+        URI uri = URI.create(builder.getUrl());
+
+        Assert.isTrue("smtp".equals(uri.getScheme()), "The protocol of the url should be smtp, and not " + uri.getScheme());
+
+        this.smtpHost = uri.getHost();
+        this.smtpPort = uri.getPort();
+        if (uri.getUserInfo() != null) {
+            userName = Optional.ofNullable(uri.getUserInfo().split(":")[0]);
+            pwd = Optional.ofNullable(uri.getUserInfo().split(":")[1]);
+        } else {
+            userName = Optional.empty();
+            pwd = Optional.empty();
+        }
+
         this.from = builder.getFrom();
         this.to = builder.getTo();
     }
@@ -36,6 +61,9 @@ public class MailNotifier extends AbstractNotifier {
                 .tags(getTags())
                 .statuses(getStatuses())
                 .period(getPeriod())
+                .url(url)
+                .from(from)
+                .to(to)
                 ;
     }
 
@@ -52,7 +80,12 @@ public class MailNotifier extends AbstractNotifier {
             JavaMailSenderImpl sender = new JavaMailSenderImpl();
             sender.setHost(smtpHost);
             sender.setPort(smtpPort);
+
+            userName.ifPresent(name -> sender.setUsername(name));
+            pwd.ifPresent(pwd -> sender.setPassword(pwd));
+
             sender.send(message);
+            logger.info("Notification mail sent for " + healthChecks.size() + " health checks");
         }
     }
 
@@ -72,6 +105,14 @@ public class MailNotifier extends AbstractNotifier {
 
     public String getFrom() {
         return from;
+    }
+
+    public Optional<String> getUserName() {
+        return userName;
+    }
+
+    public Optional<String> getPwd() {
+        return pwd;
     }
 }
 
