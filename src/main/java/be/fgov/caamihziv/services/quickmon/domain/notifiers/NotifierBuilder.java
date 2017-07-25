@@ -46,7 +46,6 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
     public NotifierBuilder() {
         this.tags = new ArrayList<>();
         this.statuses = Arrays.asList(HealthStatus.Health.WARNING, HealthStatus.Health.CRITICAL);
-        this.period = Duration.ofMinutes(30);
         this.createdOn = LocalDateTime.now();
     }
 

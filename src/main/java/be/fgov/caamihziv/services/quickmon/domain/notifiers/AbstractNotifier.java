@@ -77,7 +77,7 @@ public abstract class AbstractNotifier implements Notifier{
             return lastTimeRun == null || lastTimeRun.plus(period).isBefore(LocalDateTime.now());
         }).orElseGet(() -> {
             CronSequenceGenerator cronSequenceGenerator = new CronSequenceGenerator(schedulingCronExpression.get());
-            Date pivotDate = lastTimeRun != null ? Date.from(createdOn.atZone(ZoneOffset.systemDefault()).toInstant()) : new Date();
+            Date pivotDate = lastTimeRun != null ? Date.from(lastTimeRun.atZone(ZoneOffset.systemDefault()).toInstant()) : Date.from(createdOn.atZone(ZoneOffset.systemDefault()).toInstant());
             return cronSequenceGenerator.next(pivotDate).before(new Date());
         });
     }

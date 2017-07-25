@@ -84,6 +84,12 @@ public class AbstractNotifierTest {
             ReflectionUtils.makeAccessible(lastTimeRunField);
             ReflectionUtils.setField(lastTimeRunField, this, lastTimeRun);
         }
+
+        public void setCreatedOn(LocalDateTime lastTimeRun) {
+            Field createdOnField = ReflectionUtils.findField(AbstractNotifier.class, "createdOn");
+            ReflectionUtils.makeAccessible(createdOnField);
+            ReflectionUtils.setField(createdOnField, this, lastTimeRun);
+        }
     }
 
     @Test
@@ -116,11 +122,11 @@ public class AbstractNotifierTest {
     @Test
     public void test_valid_cron_expression_should_run() {
         DummyNotifier notifier = new DummyNotifierBuilder()
-                .schedulingCronExpression("0 0 * * * *")
+                .schedulingCronExpression("0 0 14 * * *")
                 .build();
 
-        LocalDateTime hardCodedTime = LocalDateTime.of(2000, 1, 1, 1, 30);
-        notifier.setLastTimeRun(hardCodedTime);
+        LocalDateTime hardCodedTime = LocalDateTime.of(2017, 7, 25, 13, 16);
+        notifier.setCreatedOn(hardCodedTime);
         assertTrue(notifier.shouldRun());
     }
 
