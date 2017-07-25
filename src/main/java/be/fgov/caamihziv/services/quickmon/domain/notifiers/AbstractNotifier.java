@@ -28,6 +28,7 @@ public abstract class AbstractNotifier implements Notifier{
     private Collection<HealthStatus.Health> statuses;
     private boolean onlyOnChange;
     private Object lastRunChecksum;
+    private LocalDateTime createdOn = LocalDateTime.now();
 
     public AbstractNotifier (NotifierBuilder builder) {
         this.name = builder.getName();
@@ -43,6 +44,9 @@ public abstract class AbstractNotifier implements Notifier{
         return name;
     }
 
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
 
     @Override
     public Duration getPeriod() {
@@ -72,7 +76,7 @@ public abstract class AbstractNotifier implements Notifier{
             return lastTimeRun == null || lastTimeRun.plus(period).isBefore(LocalDateTime.now());
         }).orElseGet(() -> {
             CronSequenceGenerator cronSequenceGenerator = new CronSequenceGenerator(schedulingCronExpression.get());
-            Date pivotDate = lastTimeRun != null ? Date.from(lastTimeRun.atZone(ZoneOffset.systemDefault()).toInstant()) : new Date();
+            Date pivotDate = lastTimeRun != null ? Date.from(createdOn.atZone(ZoneOffset.systemDefault()).toInstant()) : new Date();
             return cronSequenceGenerator.next(pivotDate).before(new Date());
         });
     }
