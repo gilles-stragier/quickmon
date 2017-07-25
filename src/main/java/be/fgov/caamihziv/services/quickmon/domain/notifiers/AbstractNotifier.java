@@ -46,7 +46,7 @@ public abstract class AbstractNotifier implements Notifier{
 
     @Override
     public Duration getPeriod() {
-        return period.orElse(null);
+        return period != null ? period.orElse(null) : null;
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class AbstractNotifier implements Notifier{
     }
 
     public String getSchedulingCronExpression() {
-        return schedulingCronExpression.orElseGet(null);
+        return schedulingCronExpression != null ? schedulingCronExpression.orElseGet(null) : null;
     }
 
     @Override
