@@ -13,6 +13,12 @@ public class ValidationUtils {
         }
     }
 
+    public static void isTrue(Collection<String> errors, boolean expression, String message) {
+        if (!expression) {
+            errors.add(message);
+        }
+    }
+
     public static void notEmpty(Collection<String> errors, Collection target, String message) {
         if (target == null || target.isEmpty()) {
             errors.add(message);

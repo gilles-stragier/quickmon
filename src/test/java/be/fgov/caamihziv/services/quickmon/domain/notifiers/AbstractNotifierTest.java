@@ -8,9 +8,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.Collection;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by gs on 24.07.17.
@@ -72,6 +78,12 @@ public class AbstractNotifierTest {
         public boolean isDoRun() {
             return doRun;
         }
+
+        public void setLastTimeRun(LocalDateTime lastTimeRun) {
+            Field lastTimeRunField = ReflectionUtils.findField(AbstractNotifier.class, "lastTimeRun");
+            ReflectionUtils.makeAccessible(lastTimeRunField);
+            ReflectionUtils.setField(lastTimeRunField, this, lastTimeRun);
+        }
     }
 
     @Test
@@ -86,8 +98,41 @@ public class AbstractNotifierTest {
         dummy.resetDoRun();
         dummy.run(healthCheckRepository);
 
-        Assert.assertFalse(dummy.isDoRun());
+        assertFalse(dummy.isDoRun());
 
+    }
+
+    @Test
+    public void test_invalid_cron_expression() {
+        DummyNotifierBuilder builder = new DummyNotifierBuilder()
+                .name("tutu")
+                .schedulingCronExpression("tutut");
+
+        assertFalse(builder.isValid());
+        assertTrue(builder.validate().contains("Invalid cron expressions : tutut"));
+
+    }
+
+    @Test
+    public void test_valid_cron_expression_should_run() {
+        DummyNotifier notifier = new DummyNotifierBuilder()
+                .schedulingCronExpression("0 0 * * * *")
+                .build();
+
+        LocalDateTime hardCodedTime = LocalDateTime.of(2000, 1, 1, 1, 30);
+        notifier.setLastTimeRun(hardCodedTime);
+        assertTrue(notifier.shouldRun());
+    }
+
+    @Test
+    public void test_valid_cron_expression_should_not_run() {
+        DummyNotifier notifier = new DummyNotifierBuilder()
+                .schedulingCronExpression("0 0 * * * *")
+                .build();
+
+        LocalDateTime hardCodedTime = LocalDateTime.of(2999, 1, 1, 1, 30);
+        notifier.setLastTimeRun(hardCodedTime);
+        assertFalse(notifier.shouldRun());
     }
 
 

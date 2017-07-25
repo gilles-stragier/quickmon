@@ -68,6 +68,7 @@ public class MailNotifier extends AbstractNotifier {
                 .url(url)
                 .from(from)
                 .to(to)
+                .schedulingCronExpression(getSchedulingCronExpression())
                 ;
     }
 
@@ -101,6 +102,10 @@ public class MailNotifier extends AbstractNotifier {
 
     public String getSmtpHost() {
         return smtpHost;
+    }
+
+    public String getTo() {
+        return to;
     }
 
     public int getSmtpPort() {

@@ -5,10 +5,15 @@ import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthCheckReposi
 import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthStatus;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.scheduling.support.CronSequenceGenerator;
 
+import javax.swing.text.html.Option;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
 
 /**
  * Created by gs on 08.06.17.
@@ -16,7 +21,8 @@ import java.util.Collection;
 public abstract class AbstractNotifier implements Notifier{
 
     private String name;
-    private Duration period;
+    private Optional<Duration> period;
+    private Optional<String> schedulingCronExpression;
     private LocalDateTime lastTimeRun = null;
     private Collection<String> tags;
     private Collection<HealthStatus.Health> statuses;
@@ -25,7 +31,8 @@ public abstract class AbstractNotifier implements Notifier{
 
     public AbstractNotifier (NotifierBuilder builder) {
         this.name = builder.getName();
-        this.period = builder.getPeriod();
+        this.period = Optional.ofNullable(builder.getPeriod());
+        this.schedulingCronExpression = Optional.ofNullable(builder.getSchedulingCronExpression());
         this.tags = builder.getTags();
         this.statuses = builder.getStatuses();
         this.onlyOnChange = builder.isOnlyOnChange();
@@ -36,9 +43,10 @@ public abstract class AbstractNotifier implements Notifier{
         return name;
     }
 
+
     @Override
     public Duration getPeriod() {
-        return period;
+        return period.orElse(null);
     }
 
     @Override
@@ -54,9 +62,19 @@ public abstract class AbstractNotifier implements Notifier{
         return statuses;
     }
 
+    public String getSchedulingCronExpression() {
+        return schedulingCronExpression.orElseGet(null);
+    }
+
     @Override
     public boolean shouldRun() {
-        return lastTimeRun == null || lastTimeRun.plus(period).isBefore(LocalDateTime.now());
+        return period.map(period -> {
+            return lastTimeRun == null || lastTimeRun.plus(period).isBefore(LocalDateTime.now());
+        }).orElseGet(() -> {
+            CronSequenceGenerator cronSequenceGenerator = new CronSequenceGenerator(schedulingCronExpression.get());
+            Date pivotDate = lastTimeRun != null ? Date.from(lastTimeRun.atZone(ZoneOffset.systemDefault()).toInstant()) : new Date();
+            return cronSequenceGenerator.next(pivotDate).before(new Date());
+        });
     }
 
     @Override
@@ -82,8 +100,6 @@ public abstract class AbstractNotifier implements Notifier{
             doRun(all);
             lastTimeRun = LocalDateTime.now();
         }
-
-
     }
 
     public String computeCheckSum(Collection<HealthCheck> healthChecks) {

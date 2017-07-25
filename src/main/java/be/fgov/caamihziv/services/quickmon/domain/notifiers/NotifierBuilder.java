@@ -9,6 +9,7 @@ import be.fgov.caamihziv.services.quickmon.domain.samplers.http.HttpSamplerBuild
 import be.fgov.caamihziv.services.quickmon.domain.samplers.ssh.JschSamplerBuilder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.scheduling.support.CronSequenceGenerator;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -34,6 +35,8 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
 
     private String name;
     private Duration period;
+    private String schedulingCronExpression;
+
     private Collection<String> tags;
     private Collection<HealthStatus.Health> statuses;
     private boolean onlyOnChange = true;
@@ -42,6 +45,11 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
         this.tags = new ArrayList<>();
         this.statuses = Arrays.asList(HealthStatus.Health.WARNING, HealthStatus.Health.CRITICAL);
         this.period = Duration.ofMinutes(30);
+    }
+
+    public T schedulingCronExpression(String val) {
+        this.schedulingCronExpression = val;
+        return (T) this;
     }
 
     public T tags(Collection<String> val) {
@@ -74,7 +82,8 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
     public List<String> validate() {
         ArrayList<String> errors = new ArrayList<>();
         ValidationUtils.notNull(errors, name, "Please provide the notifier a name");
-        ValidationUtils.notNull(errors, period, "Please provide the notifier a period");
+        ValidationUtils.isTrue(errors, (period != null) || (schedulingCronExpression != null), "Please provide the notifier a period or a schedulingCronExpression");
+        ValidationUtils.isTrue(errors, schedulingCronExpression == null || CronSequenceGenerator.isValidExpression(schedulingCronExpression), "Invalid cron expressions : " + schedulingCronExpression);
         return errors;
     }
 
@@ -92,6 +101,10 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
 
     public Collection<HealthStatus.Health> getStatuses() {
         return statuses;
+    }
+
+    public String getSchedulingCronExpression() {
+        return schedulingCronExpression;
     }
 
     public abstract String getType();
