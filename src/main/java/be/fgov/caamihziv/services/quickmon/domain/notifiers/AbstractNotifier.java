@@ -63,7 +63,7 @@ public abstract class AbstractNotifier implements Notifier{
     }
 
     public String getSchedulingCronExpression() {
-        return schedulingCronExpression != null ? schedulingCronExpression.orElseGet(null) : null;
+        return schedulingCronExpression != null ? schedulingCronExpression.orElse(null) : null;
     }
 
     @Override
