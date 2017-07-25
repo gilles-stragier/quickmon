@@ -69,6 +69,7 @@ public class MailNotifier extends AbstractNotifier {
                 .from(from)
                 .to(to)
                 .schedulingCronExpression(getSchedulingCronExpression())
+                .createdOn(getCreatedOn())
                 ;
     }
 

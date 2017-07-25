@@ -30,6 +30,8 @@ public class LoggingNotifier extends AbstractNotifier {
                 .period(getPeriod())
                 .statuses(getStatuses())
                 .tags(getTags())
+                .createdOn(getCreatedOn())
+                .schedulingCronExpression(getSchedulingCronExpression())
                 ;
     }
 

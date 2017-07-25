@@ -28,7 +28,7 @@ public abstract class AbstractNotifier implements Notifier{
     private Collection<HealthStatus.Health> statuses;
     private boolean onlyOnChange;
     private Object lastRunChecksum;
-    private LocalDateTime createdOn = LocalDateTime.now();
+    private LocalDateTime createdOn;
 
     public AbstractNotifier (NotifierBuilder builder) {
         this.name = builder.getName();
@@ -37,6 +37,7 @@ public abstract class AbstractNotifier implements Notifier{
         this.tags = builder.getTags();
         this.statuses = builder.getStatuses();
         this.onlyOnChange = builder.isOnlyOnChange();
+        this.createdOn = builder.getCreatedOn();
     }
 
     @Override

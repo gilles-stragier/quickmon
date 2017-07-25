@@ -41,10 +41,18 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
     private Collection<HealthStatus.Health> statuses;
     private boolean onlyOnChange = true;
 
+    private LocalDateTime createdOn;
+
     public NotifierBuilder() {
         this.tags = new ArrayList<>();
         this.statuses = Arrays.asList(HealthStatus.Health.WARNING, HealthStatus.Health.CRITICAL);
         this.period = Duration.ofMinutes(30);
+        this.createdOn = LocalDateTime.now();
+    }
+
+    public T createdOn(LocalDateTime val) {
+        this.createdOn = val;
+        return (T) this;
     }
 
     public T schedulingCronExpression(String val) {
@@ -113,5 +121,9 @@ public abstract class NotifierBuilder<T extends NotifierBuilder, U extends Notif
 
     public boolean isOnlyOnChange() {
         return onlyOnChange;
+    }
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 }
