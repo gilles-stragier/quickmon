@@ -84,7 +84,7 @@ public abstract class AbstractNotifier implements Notifier{
             Date pivotDate = lastTimeRun != null ? Date.from(lastTimeRun.atZone(ZoneOffset.systemDefault()).toInstant()) : Date.from(createdOn.atZone(ZoneOffset.systemDefault()).toInstant());
             boolean shouldRun = cronSequenceGenerator.next(pivotDate).before(now());
             if (shouldRun) {
-                logger.info("Notification " + getName() + " with cron " + getSchedulingCronExpression() + " should run now");
+                logger.info("Notification " + getName() + " with cron " + getSchedulingCronExpression() + " and pivot " + pivotDate + " should run now");
             }
             return shouldRun;
         });
