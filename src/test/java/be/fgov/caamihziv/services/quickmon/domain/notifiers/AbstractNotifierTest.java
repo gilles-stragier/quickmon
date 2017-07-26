@@ -13,7 +13,9 @@ import org.springframework.util.ReflectionUtils;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Date;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -53,9 +55,12 @@ public class AbstractNotifierTest {
             return false;
         }
     }
+
+
     public class DummyNotifier extends AbstractNotifier {
 
         private boolean doRun = false;
+        private Date now = new Date();
 
         public DummyNotifier(DummyNotifierBuilder builder) {
             super(builder);
@@ -89,6 +94,16 @@ public class AbstractNotifierTest {
             Field createdOnField = ReflectionUtils.findField(AbstractNotifier.class, "createdOn");
             ReflectionUtils.makeAccessible(createdOnField);
             ReflectionUtils.setField(createdOnField, this, lastTimeRun);
+        }
+
+
+        public void setNow(Date now) {
+            this.now = now;
+        }
+
+        @Override
+        public Date now() {
+            return now;
         }
     }
 
@@ -128,6 +143,24 @@ public class AbstractNotifierTest {
         LocalDateTime hardCodedTime = LocalDateTime.of(2017, 7, 25, 13, 16);
         notifier.setCreatedOn(hardCodedTime);
         assertTrue(notifier.shouldRun());
+    }
+
+    @Test
+    public void test_valid_cron_expression_and_lastrun_should_run() {
+        DummyNotifier notifier = new DummyNotifierBuilder()
+                .schedulingCronExpression("0 0 7-20 * * *")
+                .build();
+
+        LocalDateTime hardCodedTime = LocalDateTime.of(2017, 7, 25, 13, 16);
+        notifier.setCreatedOn(hardCodedTime);
+
+        LocalDateTime hardCodedLastRun = LocalDateTime.of(2017, 7, 25, 20, 0);
+        notifier.setLastTimeRun(hardCodedLastRun);
+
+        LocalDateTime oldNow = LocalDateTime.of(2017, 7, 26, 3, 12);
+        notifier.setNow(Date.from(oldNow.atZone(ZoneId.systemDefault()).toInstant()));
+
+        assertFalse(notifier.shouldRun());
     }
 
     @Test

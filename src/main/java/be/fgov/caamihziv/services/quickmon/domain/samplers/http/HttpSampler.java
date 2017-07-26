@@ -2,7 +2,7 @@ package be.fgov.caamihziv.services.quickmon.domain.samplers.http;
 
 import be.fgov.caamihziv.services.quickmon.domain.samplers.Sampler;
 import be.fgov.caamihziv.services.quickmon.domain.samplers.SamplerBuilder;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -10,8 +10,11 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.*;
 import java.io.IOException;
+import java.net.URI;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gs on 15.04.17.
@@ -21,11 +24,17 @@ public class HttpSampler implements Sampler<ResponseEntity<String>> {
     private final RestTemplate restTemplate;
     private final String url;
     private int timeout;
+    private HttpMethod method;
+    private String body;
+    private Map<String, List<String>> headers;
 
     public HttpSampler(HttpSamplerBuilder builder) {
         url = builder.getUrl();
         this.timeout = builder.getTimeout();
         this.restTemplate = initRestTemplate(builder.getTimeout());
+        this.method = builder.getMethod();
+        this.body = builder.getBody();
+        this.headers = builder.getHeaders();
     }
 
     protected RestTemplate initRestTemplate(int timeout) {
@@ -89,8 +98,13 @@ public class HttpSampler implements Sampler<ResponseEntity<String>> {
 
     @Override
     public ResponseEntity<String> sample() {
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-        return responseEntity;
+        URI urlObject = URI.create(this.url);
+        HttpHeaders headers = new HttpHeaders();
+        if (this.headers != null) {
+            headers.putAll(headers);
+        }
+        RequestEntity<Object> request = new RequestEntity<>(body, headers, method, urlObject);
+        return restTemplate.exchange(urlObject, method, request, String.class);
     }
 
     @Override
@@ -100,7 +114,12 @@ public class HttpSampler implements Sampler<ResponseEntity<String>> {
 
     @Override
     public SamplerBuilder toBuilder() {
-        return new HttpSamplerBuilder().url(url).timeout(timeout);
+        return new HttpSamplerBuilder()
+                .url(url)
+                .headers(headers)
+                .body(body)
+                .method(method)
+                .timeout(timeout);
     }
 
     public String getUrl() {

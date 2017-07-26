@@ -5,6 +5,8 @@ import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthCheckReposi
 import be.fgov.caamihziv.services.quickmon.domain.healthchecks.HealthStatus;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 
 import javax.swing.text.html.Option;
@@ -19,6 +21,8 @@ import java.util.Optional;
  * Created by gs on 08.06.17.
  */
 public abstract class AbstractNotifier implements Notifier{
+
+    private static Logger logger = LoggerFactory.getLogger(AbstractNotifier.class);
 
     private String name;
     private Optional<Duration> period;
@@ -78,8 +82,16 @@ public abstract class AbstractNotifier implements Notifier{
         }).orElseGet(() -> {
             CronSequenceGenerator cronSequenceGenerator = new CronSequenceGenerator(schedulingCronExpression.get());
             Date pivotDate = lastTimeRun != null ? Date.from(lastTimeRun.atZone(ZoneOffset.systemDefault()).toInstant()) : Date.from(createdOn.atZone(ZoneOffset.systemDefault()).toInstant());
-            return cronSequenceGenerator.next(pivotDate).before(new Date());
+            boolean shouldRun = cronSequenceGenerator.next(pivotDate).before(now());
+            if (shouldRun) {
+                logger.info("Notification " + getName() + " with cron " + getSchedulingCronExpression() + " should run now");
+            }
+            return shouldRun;
         });
+    }
+
+    protected Date now() {
+        return new Date();
     }
 
     @Override

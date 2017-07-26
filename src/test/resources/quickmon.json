@@ -12,7 +12,9 @@
     ],
     "sampler": {
       "type": "http",
-      "url": "http://localhost:8080/api/dummyChecks?mode=ALWAYS_OK"
+      "url": "http://localhost:8080/api/dummyChecks?mode=ALWAYS_OK",
+      "method": "POST",
+      "body": "tutu"
     }
   },
   {
