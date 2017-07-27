@@ -96,6 +96,7 @@ public abstract class AbstractNotifier implements Notifier{
 
     @Override
     public void run(HealthCheckRepository healthCheckRepository) {
+        lastTimeRun = LocalDateTime.now();
 
         Collection<HealthCheck> all = healthCheckRepository.findAll(
                 healthCheck -> statuses.contains(healthCheck.getLastStatus().getHealth()) && healthCheck.getTags().containsAll(tags)
@@ -110,12 +111,10 @@ public abstract class AbstractNotifier implements Notifier{
             String newCheckSum = computeCheckSum(all);
             if (!newCheckSum.equals(lastRunChecksum)) {
                 doRun(all);
-                lastTimeRun = LocalDateTime.now();
                 lastRunChecksum = newCheckSum;
             }
         } else {
             doRun(all);
-            lastTimeRun = LocalDateTime.now();
         }
     }
 
